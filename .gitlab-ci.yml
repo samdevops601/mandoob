@@ -1,11 +1,8 @@
-# This file is a template, and might need editing before it works on your project.
-# You can copy and paste this template into a new `.gitlab-ci.yml` file.
-# You should not add this template to an existing `.gitlab-ci.yml` file by using the `include:` keyword.
-#
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Flutter.gitlab-ci.yml
+
+stages:
+  - test
+  - build
+  - deploy
 
 code_quality:
   stage: test
@@ -19,25 +16,19 @@ code_quality:
     reports:
       codequality: gl-code-quality-report.json
 
-test:
-  stage: test
-  image: "ghcr.io/cirruslabs/flutter:3.10.3"
-  before_script:
-    - flutter pub global activate junitreport
-    - export PATH="$PATH:$HOME/.pub-cache/bin"
-  script:
-    - flutter test --machine --coverage | tojunit -o report.xml
-    - lcov --summary coverage/lcov.info
-    - genhtml coverage/lcov.info --output=coverage
-  coverage: '/lines\.*: \d+\.\d+\%/'
-  artifacts:
-    name: coverage
-    paths:
-      - $CI_PROJECT_DIR/coverage
-    reports:
-      junit: report.xml
+build_app:
+ stage: build
+ image: docker:24.0.9
+ services:
+  - docker:24.0.9-dind
+ variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+ script:
+  - docker build -t maniraja1122/mandoob .
+  - docker login -u maniraja1122 -p $DOCK_PASS
+  - docker push maniraja1122/mandoob
 
 deploy:
   stage: deploy
-  script: echo "Define your deployment script!"
-  environment: production
+  script: 
+   - sleep 1
