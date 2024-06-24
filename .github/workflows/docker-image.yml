@@ -18,8 +18,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build -t ${{USER_NAME}}/${{IMAGE_NAME}} .
+      run: docker build -t $USER_NAME/$IMAGE_NAME .
     - name: Login on Docker Hub
-      run: docker login -u ${{USER_NAME}} -p ${{DOCK_PASS}}
+      run: docker login -u $USER_NAME -p $DOCK_PASS
     - name: Push the Image
-      run: docker push ${{USER_NAME}}/${{IMAGE_NAME}}
+      run: docker push $USER_NAME/$IMAGE_NAME
