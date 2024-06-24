@@ -1,0 +1,25 @@
+name: Docker Image CI
+env:
+  USER_NAME: maniraja1122
+  IMAGE_NAME: mandoob
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    env:
+     DOCK_PASS: ${{secrets.DOCK_PASS}}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build -t $(USERNAME)/$(IMAGE_NAME) .
+    - name: Login on Docker Hub
+      run: docker login -u $(USERNAME) -p $(DOCK_PASS)
+    - name: Push the Image
+      run: docker push $(USERNAME)/$(IMAGE_NAME)
